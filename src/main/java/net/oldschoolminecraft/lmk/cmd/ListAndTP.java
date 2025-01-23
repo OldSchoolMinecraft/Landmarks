@@ -2,6 +2,8 @@ package net.oldschoolminecraft.lmk.cmd;
 
 import net.oldschoolminecraft.lmk.LandmarkData;
 import net.oldschoolminecraft.lmk.Landmarks;
+import net.oldschoolminecraft.lmk.PlayerConf;
+import net.oldschoolminecraft.lmk.SortingMode;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -63,25 +65,34 @@ public class ListAndTP implements CommandExecutor
             }
         }
 
-        List<LandmarkData> lmkPage = getLandmarkPage(page);
+        PlayerConf playerConf = plugin.getPlayerConfig(sender.getName());
+        SortingMode sortingMode = SortingMode.valueOf(String.valueOf(playerConf.getConfigOption("sorting.mode")));
+
+        List<LandmarkData> lmkPage = getLandmarkPage(sortingMode, page);
         if (lmkPage == null)
         {
             sender.sendMessage(ChatColor.GRAY + "The page " + ChatColor.DARK_GRAY + "#" + page + ChatColor.GRAY + " doesn't exist!");
             return true;
         }
 
-        sender.sendMessage(ChatColor.GRAY + "-- Landmarks (" + ChatColor.DARK_GRAY + "Page " + page + "/" + MAX_PAGES + ChatColor.GRAY + ") --");
+        sender.sendMessage(ChatColor.GRAY + "-- Landmarks (" + ChatColor.DARK_GRAY + "Page " + page + "/" + MAX_PAGES + ChatColor.GRAY + ") " + sortingMode.getMessage() + ChatColor.GRAY + " --");
         int pageStartNum = ((page - 1) * LIST_OFFSET) + 1;
         int index = 0;
         for (LandmarkData landmark : lmkPage)
         {
             String pageStr = (pageStartNum + index) + ". ";
-            sender.sendMessage(ChatColor.DARK_GRAY + pageStr + ChatColor.GRAY + landmark.name);
+            sender.sendMessage(ChatColor.DARK_GRAY + pageStr + ChatColor.GRAY + landmark.name + ((sortingMode == SortingMode.VISITS) ? " - " + getVisitorsString(landmark) : ""));
             index++;
         }
-        sender.sendMessage(ChatColor.GRAY + "-- Use " + ChatColor.DARK_GRAY + "/lmk #" + ChatColor.GRAY + " to show other pages --");
+        sender.sendMessage(ChatColor.GRAY + "-- Use " + ChatColor.DARK_GRAY + "/lmk <number>" + ChatColor.GRAY + " to show other pages --");
+        sender.sendMessage(ChatColor.GRAY + "-- Use " + ChatColor.DARK_GRAY + "/lmksort" + ChatColor.GRAY + " to change the order --");
 
         return true;
+    }
+
+    private String getVisitorsString(LandmarkData lmk)
+    {
+        return ChatColor.DARK_GRAY + String.valueOf(((lmk.visitors == null) ? 0 : lmk.visitors.size())) + ChatColor.GRAY + " visitors";
     }
 
     private void asyncSave()
@@ -100,9 +111,9 @@ public class ListAndTP implements CommandExecutor
         }
     }
 
-    private List<LandmarkData> getLandmarkPage(int page)
+    private List<LandmarkData> getLandmarkPage(SortingMode sortingMode, int page)
     {
-        List<List<LandmarkData>> lmkPages = paginateLandmarks(plugin.getLmkManager().getLandmarks());
+        List<List<LandmarkData>> lmkPages = paginateLandmarks(plugin.getLmkManager().getSortedLandmarks(sortingMode));
         MAX_PAGES = lmkPages.size();
         if (page < 1 || (page - 1) >= lmkPages.size())
             return null;

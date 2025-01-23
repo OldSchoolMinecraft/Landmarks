@@ -48,13 +48,36 @@ public class LmkManager
             System.err.println("Failed to reload landmarks: " + e.getMessage());
             e.printStackTrace(System.err);
         }
+    }
 
-        sortAlphabetically(landmarks);
+    public ArrayList<LandmarkData> getSortedLandmarks(SortingMode mode)
+    {
+        switch (mode)
+        {
+            default:
+            case DEFAULT:
+                return landmarks; // just return them as they are on disk
+            case ALPHABETICAL:
+                ArrayList<LandmarkData> alphabetical = new ArrayList<>();
+                alphabetical.addAll(landmarks);
+                sortAlphabetically(alphabetical);
+                return alphabetical;
+            case VISITS:
+                ArrayList<LandmarkData> visits = new ArrayList<>();
+                visits.addAll(landmarks);
+                sortByVisits(visits);
+                return visits;
+        }
     }
 
     private void sortAlphabetically(ArrayList<LandmarkData> landmarks)
     {
         landmarks.sort(Comparator.comparing(lmk -> lmk.name, String.CASE_INSENSITIVE_ORDER));
+    }
+
+    private void sortByVisits(ArrayList<LandmarkData> landmarks)
+    {
+        landmarks.sort(Comparator.comparingInt(lmk -> (((LandmarkData)lmk).visitors != null) ? ((LandmarkData)lmk).visitors.size() : 0).reversed());
     }
 
     public void save()

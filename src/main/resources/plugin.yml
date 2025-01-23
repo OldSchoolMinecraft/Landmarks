@@ -15,3 +15,8 @@ commands:
     usage: /<command> <create/delete> <name>
     default: op
     permission: landmarks.admin
+  lmksort:
+    description: Change landmark list sorting mode
+    usage: /<command> <default,alphabetical,visits>
+    default: op
+    permission: landmark.sortmode
