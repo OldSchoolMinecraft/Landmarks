@@ -56,6 +56,8 @@ public class ListAndTP implements CommandExecutor
                     return true;
                 }
                 ((Player)sender).teleport(new Location(Bukkit.getWorld(lmk.worldName), lmk.x, lmk.y, lmk.z, lmk.yaw, lmk.pitch));
+                lmk.registerVisit(((Player)sender).getName());
+                asyncSave(); // make sure the visit is saved
                 sender.sendMessage(ChatColor.GRAY + "You have been teleported to '" + ChatColor.DARK_GRAY + lmkName + "'" + ChatColor.GRAY + "!");
                 return true;
             }
@@ -80,6 +82,11 @@ public class ListAndTP implements CommandExecutor
         sender.sendMessage(ChatColor.GRAY + "-- Use " + ChatColor.DARK_GRAY + "/lmk #" + ChatColor.GRAY + " to show other pages --");
 
         return true;
+    }
+
+    private void asyncSave()
+    {
+        Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin, () -> plugin.getLmkManager().save(), 0L);
     }
 
     private boolean isNumber(String in)
