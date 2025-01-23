@@ -12,6 +12,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class LmkManager
 {
@@ -46,6 +48,13 @@ public class LmkManager
             System.err.println("Failed to reload landmarks: " + e.getMessage());
             e.printStackTrace(System.err);
         }
+
+        sortAlphabetically(landmarks);
+    }
+
+    private void sortAlphabetically(ArrayList<LandmarkData> landmarks)
+    {
+        landmarks.sort(Comparator.comparing(lmk -> lmk.name, String.CASE_INSENSITIVE_ORDER));
     }
 
     public void save()
