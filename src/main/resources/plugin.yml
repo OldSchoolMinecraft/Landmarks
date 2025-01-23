@@ -1,0 +1,17 @@
+name: Landmarks
+version: 1.0
+author: moderator_man
+main: net.oldschoolminecraft.lmk.Landmarks
+commands:
+  landmarks:
+    description: List or teleport to landmarks
+    usage: /<command> [name]
+    aliases:
+      - lmk
+    default: op
+    permission: landmarks.listandtp
+  lmkadmin:
+    description: Manage landmarks
+    usage: /<command> <create/delete> <name>
+    default: op
+    permission: landmarks.admin
