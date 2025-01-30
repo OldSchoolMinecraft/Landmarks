@@ -5,7 +5,7 @@
 * /lmkadmin
 
 The first command will show you a paginated list of all the landmarks available.<br />
-The second command allows admins (or anyone with permission) to add create and delete landmarks.
+The second command allows admins (or anyone with permission) to create and delete landmarks.
 
 #### Permissions:
 ```
