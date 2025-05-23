@@ -12,7 +12,7 @@ commands:
     permission: landmarks.listandtp
   lmkadmin:
     description: Manage landmarks
-    usage: /<command> <create/delete> <name>
+    usage: /<command> <create/delete/move> <name>
     default: op
     permission: landmarks.admin
   lmksort:
