@@ -80,6 +80,22 @@ public class Admin implements CommandExecutor
                     return true;
                 }
                 break;
+            case "move":
+                if (!(sender instanceof Player))
+                {
+                    sender.sendMessage(ChatColor.RED + "Only players can move landmarks!");
+                    return true;
+                }
+
+                try
+                {
+                    plugin.getLmkManager().moveCurrentLandmark(name, ply);
+                    sender.sendMessage(ChatColor.GREEN + "Successfully moved landmark '" + name + "'!");
+                } catch (NotFoundException e) {
+                    sender.sendMessage(ChatColor.RED + "No landmark called '" + ChatColor.DARK_GRAY + name + ChatColor.RED + "' found!");
+                    return true;
+                }
+                break;
         }
 
         return true;
