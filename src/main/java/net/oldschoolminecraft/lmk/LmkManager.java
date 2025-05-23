@@ -105,6 +105,19 @@ public class LmkManager
         save();
     }
 
+    public void moveCurrentLandmark(String name, Player player) throws NotFoundException
+    {
+        if (findLandmark(name) == null) throw new NotFoundException();
+        LandmarkData newLmkLoc = findLandmark(name);
+        newLmkLoc.worldName = player.getWorld().getName();
+        newLmkLoc.x = player.getLocation().getX();
+        newLmkLoc.y = player.getLocation().getY();
+        newLmkLoc.z = player.getLocation().getZ();
+        newLmkLoc.yaw = player.getLocation().getYaw();
+        newLmkLoc.pitch = player.getLocation().getPitch();
+        save();
+    }
+
     public ArrayList<LandmarkData> getLandmarks()
     {
         return landmarks;
