@@ -35,6 +35,14 @@ public class Admin implements CommandExecutor
             return true;
         }
 
+        if (!(sender instanceof Player))
+        {
+            sender.sendMessage(ChatColor.RED + "Only players can manage landmarks!");
+            return true;
+        }
+
+        Player ply = (Player) sender;
+
         String subcommand = args[0];
         String name = args[1];
 
@@ -44,13 +52,6 @@ public class Admin implements CommandExecutor
                 sender.sendMessage(ChatColor.RED + "Unknown sub-command: " + ChatColor.GRAY + subcommand);
                 break;
             case "create":
-                if (!(sender instanceof Player))
-                {
-                    sender.sendMessage(ChatColor.RED + "Only players can create landmarks!");
-                    return true;
-                }
-
-                Player ply = (Player) sender;
                 Location plyLoc = ply.getLocation();
 
                 LandmarkData newLmk = new LandmarkData();
@@ -81,12 +82,6 @@ public class Admin implements CommandExecutor
                 }
                 break;
             case "move":
-                if (!(sender instanceof Player))
-                {
-                    sender.sendMessage(ChatColor.RED + "Only players can move landmarks!");
-                    return true;
-                }
-
                 try
                 {
                     plugin.getLmkManager().moveCurrentLandmark(name, ply);
