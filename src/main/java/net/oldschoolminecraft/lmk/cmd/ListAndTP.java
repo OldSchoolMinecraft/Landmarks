@@ -57,11 +57,20 @@ public class ListAndTP implements CommandExecutor
                     sender.sendMessage(ChatColor.GRAY + "There is no landmark called '" + ChatColor.DARK_GRAY + lmkName + "'" + ChatColor.GRAY + "!");
                     return true;
                 }
-                ((Player)sender).teleport(new Location(Bukkit.getWorld(lmk.worldName), lmk.x, lmk.y, lmk.z, lmk.yaw, lmk.pitch));
-                lmk.registerVisit(((Player)sender).getName());
-                asyncSave(); // make sure the visit is saved
-                sender.sendMessage(ChatColor.GRAY + "You have been teleported to '" + ChatColor.DARK_GRAY + lmkName + "'" + ChatColor.GRAY + "!");
-                return true;
+
+                Location targetLoc = new Location(Bukkit.getWorld(lmk.worldName), lmk.x, lmk.y, lmk.z, lmk.yaw, lmk.pitch);
+
+                try {
+                    ((Player)sender).teleport(plugin.getLmkManager().getSafeDestination(targetLoc));
+
+                    lmk.registerVisit(((Player)sender).getName());
+                    asyncSave(); // make sure the visit is saved
+                    sender.sendMessage(ChatColor.GRAY + "You have been teleported to '" + ChatColor.DARK_GRAY + lmkName + "'" + ChatColor.GRAY + "!");
+                    return true;
+                } catch (Exception ex) {
+                    ((Player)sender).sendMessage("§cError: " + ex.getMessage());
+                    return true;
+                }
             }
         }
 
