@@ -5,6 +5,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import net.oldschoolminecraft.lmk.ex.DuplicateException;
 import net.oldschoolminecraft.lmk.ex.NotFoundException;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -132,5 +136,59 @@ public class LmkManager
                 return lmk;
         }
         return null;
+    }
+
+    public Location getSafeDestination(Location loc)
+            throws Exception
+    {
+        if ((loc == null) || (loc.getWorld() == null)) {
+            throw new Exception("§cError: Destination unknown.");
+        }
+        World world = loc.getWorld();
+        int x = loc.getBlockX();
+        int y = loc.getBlockY();
+        int z = loc.getBlockZ();
+        while (isBlockAboveAir(world, x, y, z)) {
+            y--;
+            if (y < 0) {
+                break;
+            }
+        }
+        while (isBlockUnsafe(world, x, y, z)) {
+            y++;
+            if (y >= 127) {
+                x++;
+            }
+        }
+        while (isBlockUnsafe(world, x, y, z)) {
+            y--;
+            if (y <= 1)
+            {
+                y = 127;
+                x++;
+                if (x - 32 > loc.getBlockX()) {
+                    throw new Exception("§cError: Hole in floor.");
+                }
+            }
+        }
+        return new Location(world, x + 0.5D, y, z + 0.5D, loc.getYaw(), loc.getPitch());
+    }
+
+    private boolean isBlockAboveAir(World world, int x, int y, int z) {
+        return world.getBlockAt(x, y - 1, z).getType() == Material.AIR;
+    }
+
+    public boolean isBlockUnsafe(World world, int x, int y, int z) {
+        Block below = world.getBlockAt(x, y - 1, z);
+        if ((below.getType() == Material.LAVA) || (below.getType() == Material.STATIONARY_LAVA)) {
+            return true;
+        }
+        if (below.getType() == Material.FIRE) {
+            return true;
+        }
+//        if ((world.getBlockAt(x, y, z).getType() != Material.AIR) || (world.getBlockAt(x, y + 1, z).getType() != Material.AIR)) { // For /lmks, sure. Not for /ctp. Teleports you to the safest block.
+//            return true;
+//        }
+        return isBlockAboveAir(world, x, y, z);
     }
 }
